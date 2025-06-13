@@ -1,0 +1,8 @@
+tqdm
+opencv-python
+einops
+tensorflow
+keras
+matplotlib
+scikit-learn
+ipykernel
