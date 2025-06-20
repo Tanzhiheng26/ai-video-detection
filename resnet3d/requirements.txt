@@ -1,3 +1,4 @@
+# conda create -n r3d python=3.9
 tqdm
 opencv-python
 einops
@@ -6,3 +7,4 @@ keras
 matplotlib
 scikit-learn
 ipykernel
+imageio
