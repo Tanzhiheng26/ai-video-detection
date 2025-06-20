@@ -1,0 +1,10 @@
+# conda create -n videomae python=3.9
+pytorchvideo 
+transformers 
+evaluate
+ipykernel
+imageio
+torchvision
+accelerate>=0.26.0
+scikit-learn
+matplotlib
