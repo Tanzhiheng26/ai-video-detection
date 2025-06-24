@@ -14,13 +14,16 @@ batch_size = 8
 #%%
 output_signature = (tf.TensorSpec(shape=(n_frames, HEIGHT, WIDTH, 3), dtype=tf.float32), # video frames
                     tf.TensorSpec(shape=(), dtype=tf.int16)) # label
+AUTOTUNE = tf.data.AUTOTUNE
 
 train_ds = tf.data.Dataset.from_generator(FrameGenerator(Path("../data/train"), n_frames, training=True),
                                           output_signature = output_signature)
+train_ds = train_ds.cache().shuffle(1000).prefetch(buffer_size = AUTOTUNE)
 train_ds = train_ds.batch(batch_size)
 
 val_ds = tf.data.Dataset.from_generator(FrameGenerator(Path("../data/val"), n_frames),
                                         output_signature = output_signature)
+val_ds = val_ds.cache().prefetch(buffer_size = AUTOTUNE)
 val_ds = val_ds.batch(batch_size)
 #%%
 input_shape = (None, n_frames, HEIGHT, WIDTH, 3)
