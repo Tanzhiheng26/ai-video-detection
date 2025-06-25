@@ -53,6 +53,7 @@ args = TrainingArguments(
     load_best_model_at_end=True,
     metric_for_best_model="eval_loss",
     max_steps=(train_dataset.num_videos // batch_size) * num_epochs,
+    dataloader_num_workers=4
 )
 #%%
 metric = evaluate.load("accuracy")
