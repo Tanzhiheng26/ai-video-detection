@@ -1,3 +1,4 @@
+import random
 import pytorchvideo.data
 
 from pytorchvideo.transforms import (
@@ -15,7 +16,7 @@ from torchvision.transforms import (
     Resize,
 )
 
-def load_dataset(data_path, model, image_processor, clip_duration, train):
+def load_dataset(data_path, model, image_processor, clip_duration, training, seed=42):
     mean = image_processor.image_mean
     std = image_processor.image_std
     if "shortest_edge" in image_processor.size:
@@ -25,6 +26,7 @@ def load_dataset(data_path, model, image_processor, clip_duration, train):
         width = image_processor.size["width"]
     resize_to = (height, width)
     num_frames_to_sample = model.config.num_frames
+    random.seed(seed)
     
     train_transform = Compose(
         [
@@ -64,6 +66,6 @@ def load_dataset(data_path, model, image_processor, clip_duration, train):
         data_path=data_path,
         clip_sampler=pytorchvideo.data.make_clip_sampler("random", clip_duration),
         decode_audio=False,
-        transform=train_transform if train else val_transform
+        transform=train_transform if training else val_transform
     )
 
