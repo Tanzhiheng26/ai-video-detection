@@ -1,6 +1,6 @@
-# conda create -n videomae python=3.9
+# conda create -n videomae python=3.10.12
 pytorchvideo 
-transformers 
+transformers==4.51.3
 evaluate
 ipykernel
 imageio

@@ -1,4 +1,4 @@
-# conda create -n r3d python=3.9
+# conda create -n r3d python=3.10.12
 tqdm
 opencv-python
 einops
