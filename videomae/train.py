@@ -25,7 +25,7 @@ train_dataset = load_dataset(
     model=model,
     image_processor=image_processor,
     clip_duration=clip_duration,
-    train=True
+    training=True
 )
 
 val_dataset = load_dataset(
@@ -33,7 +33,7 @@ val_dataset = load_dataset(
     model=model,
     image_processor=image_processor,
     clip_duration=clip_duration,
-    train=False
+    training=False
 )
 #%%
 model_name = model_ckpt.split("/")[-1]
@@ -45,7 +45,7 @@ args = TrainingArguments(
     new_model_name,
     remove_unused_columns=False,
     eval_strategy="epoch",
-    save_strategy="epoch",
+    save_strategy="best",
     per_device_train_batch_size=batch_size,
     per_device_eval_batch_size=batch_size,
     warmup_ratio=0.1,

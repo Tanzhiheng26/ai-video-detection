@@ -28,7 +28,7 @@ test_dataset = load_dataset(
     model=model,
     image_processor=image_processor,
     clip_duration=clip_duration,
-    train=False
+    training=False
 )
 
 # %%
