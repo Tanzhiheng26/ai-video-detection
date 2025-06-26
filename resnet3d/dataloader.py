@@ -48,12 +48,12 @@ def format_frames(frame):
       Formatted frame with padding of specified output size.
   """
   frame = tf.image.convert_image_dtype(frame, tf.float32) # scaled to [0,1)
-  frame = tf.image.resize(frame, [256, 256])
+  frame = tf.image.resize(frame, [298, 298])
   # Center crop to 224x224
   frame = tf.image.resize_with_crop_or_pad(frame, 224, 224)
   return frame
 
-def frames_from_video_file(video_path, n_frames, frame_step = 4):
+def frames_from_video_file(video_path, n_frames, frame_step = 2):
   """
     Creates frames from each video file present for each category.
 

@@ -11,7 +11,7 @@ from pytorchvideo.transforms import (
 from torchvision.transforms import (
     Compose,
     Lambda,
-    RandomCrop,
+    CenterCrop,
     RandomHorizontalFlip,
     Resize,
 )
@@ -38,7 +38,7 @@ def load_dataset(data_path, model, image_processor, clip_duration, training, see
                         Lambda(lambda x: x / 255.0),
                         Normalize(mean, std),
                         RandomShortSideScale(min_size=256, max_size=320),
-                        RandomCrop(resize_to),
+                        CenterCrop(resize_to),
                         RandomHorizontalFlip(p=0.5),
                     ]
                 ),
