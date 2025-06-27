@@ -6,11 +6,21 @@ import numpy as np
 from utils import collate_fn 
 from transformers import VideoMAEImageProcessor, VideoMAEForVideoClassification, TrainingArguments, Trainer
 from dataloader import load_dataset
+import json
 #%%
-dataset_root_path = pathlib.Path("../data")
+with open("config.json") as f:
+    config = json.load(f)
+
+clip_duration = config["clip_duration"]
+batch_size = config["batch_size"]
+num_epochs = config["num_epochs"]
+dataset_root_path = pathlib.Path(config["dataset_root_path"])
+model_ckpt = config["base_model"]
+dataloader_num_workers = config["dataloader_num_workers"]
+
+#%%
 label2id = {"real": 0, "fake": 1}
 id2label = {0: "real", 1: "fake"}
-model_ckpt = "MCG-NJU/videomae-base"
 image_processor = VideoMAEImageProcessor.from_pretrained(model_ckpt)
 model = VideoMAEForVideoClassification.from_pretrained(
     model_ckpt,
@@ -18,7 +28,7 @@ model = VideoMAEForVideoClassification.from_pretrained(
     id2label=id2label,
     ignore_mismatched_sizes=True,  # provide this in case you're planning to fine-tune an already fine-tuned checkpoint
 )
-clip_duration = 5
+
 #%%
 train_dataset = load_dataset(
     data_path=os.path.join(dataset_root_path, "train"),
@@ -38,8 +48,6 @@ val_dataset = load_dataset(
 #%%
 model_name = model_ckpt.split("/")[-1]
 new_model_name = f"{model_name}-finetuned"
-num_epochs = 1
-batch_size = 8
 
 args = TrainingArguments(
     new_model_name,
@@ -53,7 +61,7 @@ args = TrainingArguments(
     load_best_model_at_end=True,
     metric_for_best_model="eval_loss",
     max_steps=(train_dataset.num_videos // batch_size) * num_epochs,
-    dataloader_num_workers=4
+    dataloader_num_workers=dataloader_num_workers
 )
 #%%
 metric = evaluate.load("accuracy")

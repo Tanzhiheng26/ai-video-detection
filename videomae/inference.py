@@ -7,12 +7,20 @@ from transformers import VideoMAEImageProcessor, VideoMAEForVideoClassification,
 from dataloader import load_dataset
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, accuracy_score, precision_score, recall_score, f1_score
 import matplotlib.pyplot as plt
+import json
+
+#%%
+with open("config.json") as f:
+    config = json.load(f)
+
+clip_duration = config["clip_duration"]
+batch_size = config["batch_size"]
+dataset_root_path = pathlib.Path(config["dataset_root_path"])
+model_ckpt = config["finetuned_model"]
 
 # %%
-dataset_root_path = pathlib.Path("../data")
 label2id = {"real": 0, "fake": 1}
 id2label = {0: "real", 1: "fake"}
-model_ckpt = "checkpoints/checkpoint-1000"
 image_processor = VideoMAEImageProcessor.from_pretrained(model_ckpt)
 model = VideoMAEForVideoClassification.from_pretrained(
     model_ckpt,
@@ -20,7 +28,6 @@ model = VideoMAEForVideoClassification.from_pretrained(
     id2label=id2label,
     ignore_mismatched_sizes=True,  # provide this in case you're planning to fine-tune an already fine-tuned checkpoint
 )
-clip_duration = 5
 
 # %%
 test_dataset = load_dataset(

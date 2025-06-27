@@ -1,0 +1,9 @@
+{
+  "clip_duration": 5,
+  "batch_size": 8,
+  "num_epochs": 20,
+  "dataset_root_path": "../data",
+  "base_model": "MCG-NJU/videomae-base",
+  "dataloader_num_workers": 4,
+  "finetuned_model": "videomae-base-finetuned/checkpoint-1000"
+}
