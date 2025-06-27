@@ -26,7 +26,7 @@ AUTOTUNE = tf.data.AUTOTUNE
 train_ds = tf.data.Dataset.from_generator(FrameGenerator(Path(train_path), n_frames, frame_step, training=True),
                                           output_signature = output_signature)
 train_ds = train_ds.cache().shuffle(buffer_size=train_ds.cardinality()).prefetch(buffer_size = AUTOTUNE)
-train_ds = train_ds.batch(batch_size)
+train_ds = train_ds.batch(batch_size, drop_remainder=True)
 
 val_ds = tf.data.Dataset.from_generator(FrameGenerator(Path(val_path), n_frames, frame_step),
                                         output_signature = output_signature)
