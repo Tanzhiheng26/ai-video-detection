@@ -5,23 +5,30 @@ from keras import layers
 import tensorflow as tf
 from model import Conv2Plus1D, ResizeVideo, add_residual_block
 from dataloader import FrameGenerator
+import json
 #%%
+with open("config.json") as f:
+    config = json.load(f)
+
 HEIGHT = 224
 WIDTH = 224
-
-n_frames = 16
-batch_size = 8
+n_frames = config["num_frames"]
+frame_step = config["frame_step"]
+batch_size = config["batch_size"]
+num_epochs = config["num_epochs"]
+train_path = config["train_path"]
+val_path = config["val_path"]
 #%%
 output_signature = (tf.TensorSpec(shape=(n_frames, HEIGHT, WIDTH, 3), dtype=tf.float32), # video frames
                     tf.TensorSpec(shape=(), dtype=tf.int16)) # label
 AUTOTUNE = tf.data.AUTOTUNE
 
-train_ds = tf.data.Dataset.from_generator(FrameGenerator(Path("../data/train"), n_frames, training=True),
+train_ds = tf.data.Dataset.from_generator(FrameGenerator(Path(train_path), n_frames, frame_step, training=True),
                                           output_signature = output_signature)
-train_ds = train_ds.cache().shuffle(1000).prefetch(buffer_size = AUTOTUNE)
+train_ds = train_ds.cache().shuffle(buffer_size=train_ds.cardinality()).prefetch(buffer_size = AUTOTUNE)
 train_ds = train_ds.batch(batch_size)
 
-val_ds = tf.data.Dataset.from_generator(FrameGenerator(Path("../data/val"), n_frames),
+val_ds = tf.data.Dataset.from_generator(FrameGenerator(Path(val_path), n_frames, frame_step),
                                         output_signature = output_signature)
 val_ds = val_ds.cache().prefetch(buffer_size = AUTOTUNE)
 val_ds = val_ds.batch(batch_size)
@@ -65,16 +72,7 @@ model_checkpoint = keras.callbacks.ModelCheckpoint(
     save_weights_only=True,
     save_best_only=True)
 
-early_stopping = keras.callbacks.EarlyStopping(
-    monitor='val_loss', 
-    patience=3,
-    restore_best_weights=True,
-)
-
 model.fit(x=train_ds, 
-          epochs=20,
+          epochs=num_epochs,
           validation_data=val_ds,
-          callbacks=[early_stopping])
-# %%
-model.save_weights("checkpoints/best.weights.h5")
-# %%
+          callbacks=[model_checkpoint])

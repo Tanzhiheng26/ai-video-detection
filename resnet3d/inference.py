@@ -7,19 +7,25 @@ from model import Conv2Plus1D, ResizeVideo, add_residual_block
 from dataloader import FrameGenerator
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, accuracy_score, precision_score, recall_score, f1_score
 import matplotlib.pyplot as plt
+import json
 
 # %%
+with open("config.json") as f:
+    config = json.load(f)
+
 HEIGHT = 224
 WIDTH = 224
-
-n_frames = 16
-batch_size = 8
+n_frames = config["num_frames"]
+frame_step = config["frame_step"]
+batch_size = config["batch_size"]
+test_path = config["test_path"]
+weights_path = config["weights_path"]
 
 # %%
 output_signature = (tf.TensorSpec(shape = (n_frames, HEIGHT, WIDTH, 3), dtype = tf.float32),
                     tf.TensorSpec(shape = (), dtype = tf.int16))
 
-test_ds = tf.data.Dataset.from_generator(FrameGenerator(Path("../data/test"), n_frames),
+test_ds = tf.data.Dataset.from_generator(FrameGenerator(Path(test_path), n_frames, frame_step),
                                           output_signature = output_signature)
 # Batch the data
 test_ds = test_ds.batch(batch_size)
@@ -55,7 +61,7 @@ x = layers.Dense(1, activation='sigmoid')(x)
 model = keras.Model(input, x)
 
 # %%
-model.load_weights("checkpoints/05.weights.h5")
+model.load_weights(weights_path)
 model.compile(loss = keras.losses.BinaryCrossentropy(),
               optimizer = keras.optimizers.Adam(learning_rate = 0.0001),
               metrics = ['accuracy'])

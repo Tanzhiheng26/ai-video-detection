@@ -1,0 +1,10 @@
+{
+  "num_frames": 16,
+  "frame_step": 2,
+  "batch_size": 8,
+  "num_epochs": 20,
+  "train_path": "../data/train",
+  "val_path": "../data/val",
+  "test_path": "../data/test",
+  "weights_path": "checkpoints/11.weights.h5" 
+}

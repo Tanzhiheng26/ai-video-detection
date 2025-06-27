@@ -4,7 +4,7 @@ import numpy as np
 import tensorflow as tf
 
 class FrameGenerator:
-  def __init__(self, path, n_frames, training = False, seed = 42):
+  def __init__(self, path, n_frames=16, frame_step=2, training=False, seed=42):
     """ Returns a set of frames with their associated label.
 
       Args:
@@ -14,6 +14,7 @@ class FrameGenerator:
     """
     self.path = path
     self.n_frames = n_frames
+    self.frame_step = frame_step
     self.training = training
     self.seed = seed
     random.seed(self.seed)
@@ -32,7 +33,7 @@ class FrameGenerator:
       random.shuffle(pairs)
 
     for path, name in pairs:
-      video_frames = frames_from_video_file(path, self.n_frames)
+      video_frames = frames_from_video_file(path, self.n_frames, self.frame_step)
       label = 1 if name == "1_fake" else 0 # Encode labels
       yield video_frames, label
 
@@ -53,7 +54,7 @@ def format_frames(frame):
   frame = tf.image.resize_with_crop_or_pad(frame, 224, 224)
   return frame
 
-def frames_from_video_file(video_path, n_frames, frame_step = 2):
+def frames_from_video_file(video_path, n_frames, frame_step):
   """
     Creates frames from each video file present for each category.
 
