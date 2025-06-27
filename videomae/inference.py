@@ -17,6 +17,7 @@ clip_duration = config["clip_duration"]
 batch_size = config["batch_size"]
 dataset_root_path = pathlib.Path(config["dataset_root_path"])
 model_ckpt = config["finetuned_model"]
+dataloader_num_workers = config["dataloader_num_workers"]
 
 # %%
 label2id = {"real": 0, "fake": 1}
@@ -41,6 +42,7 @@ test_dataset = load_dataset(
 # %%
 args = TrainingArguments(
     remove_unused_columns=False,
+    dataloader_num_workers=dataloader_num_workers
 )
 
 trainer = Trainer(
